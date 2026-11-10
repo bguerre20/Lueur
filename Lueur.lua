@@ -28,6 +28,7 @@ local DEFAULTS = {
 	colors      = {       -- couleur de la lueur de chaque catégorie
 		ore   = { 1.00, 0.60, 0.18 },
 		herb  = { 0.40, 1.00, 0.42 },
+		skin  = { 0.92, 0.48, 0.24 },
 		quest = { 1.00, 0.84, 0.15 },
 		chest = { 0.45, 0.78, 1.00 },
 		bobber = { 1.00, 0.45, 0.40 },
@@ -65,7 +66,7 @@ local DEFAULTS = {
 
 -- Réglages propres à chaque personnage (LueurCharDB) : ce qu'il récolte, et la découpe à sa taille
 local CHAR_DEFAULTS = {
-	categories  = { ore = true, herb = true, quest = true, chest = true, bobber = true, other = false },
+	categories  = { ore = true, herb = true, skin = true, quest = true, chest = true, bobber = true, other = false },
 	bodyScale   = 100,    -- taille de la zone découpée autour du personnage (%)
 	bodyShift   = 0,      -- décalage vertical de cette zone (% de la hauteur du personnage)
 	nodeSwitch  = false,  -- deux métiers de récolte : Lueur allume tour à tour le pistage des plantes et celui des minerais
@@ -95,7 +96,7 @@ local LIMITS = {
 
 -- "chest" : ce qui se fouille (coffres, caisses, tonneaux) ; "bobber" : le flotteur de la ligne de pêche ;
 -- "other" : le reste (portes, boîtes aux lettres…)
-local CATEGORY_ORDER = { "ore", "herb", "quest", "chest", "bobber", "other" }
+local CATEGORY_ORDER = { "ore", "herb", "skin", "quest", "chest", "bobber", "other" }
 
 -- Styles du halo d'avant la version 0.5 -> effet qui les remplace
 local LEGACY_STYLES = { aura = "aura", reticule = "aura", discret = "subtle" }
@@ -124,6 +125,7 @@ local BOBBER_IDS    = { [35591] = true }
 local CURSOR_CATEGORY = {
 	Mine = "ore",
 	GatherHerbs = "herb",
+	Skin = "skin", SkinAlliance = "skin", SkinHorde = "skin",
 	Quest = "quest", QuestRepeatable = "quest", QuestTurnIn = "quest", QuestInteract = "quest",
 	CampaignQuest = "quest", CampaignQuestTurnIn = "quest", LegendaryQuest = "quest", LegendaryQuestTurnIn = "quest",
 	Important = "quest", ImportantTurnIn = "quest", Recurring = "quest", Recurringturnin = "quest",
@@ -136,7 +138,7 @@ local CURSOR_CATEGORY = {
 }
 
 -- Curseur que l'aperçu montre pour chaque catégorie, faute d'objet à qui le demander
-local SAMPLE_CURSOR = { ore = "Mine", herb = "GatherHerbs", quest = "Quest", chest = "Pickup", bobber = "Fishing", other = "Interact" }
+local SAMPLE_CURSOR = { ore = "Mine", herb = "GatherHerbs", skin = "Skin", quest = "Quest", chest = "Pickup", bobber = "Fishing", other = "Interact" }
 
 -- CVars que Lueur modifie (valeurs d'origine sauvegardées puis restaurées par /lueur off)
 local MANAGED_CVARS = {
@@ -290,8 +292,9 @@ local function EnsureIconCVars()
 	-- Le client beta écrase SoftTargetIconGameObject à 0 après PLAYER_ENTERING_WORLD
 	-- On le répare ici, avant que Evaluate() ne cherche la nameplate
 	if gateOpen == true then
-		local current = GetCVarValue("SoftTargetIconGameObject")
-		if current ~= "1" then SetCVarValue("SoftTargetIconGameObject", 1) end
+		for _, name in ipairs(ICON_CVARS) do
+			if GetCVarValue(name) ~= "1" then SetCVarValue(name, 1) end
+		end
 	end
 end
 
@@ -303,13 +306,10 @@ local function SetGate(open)
 	end
 	gateOpen = open
 	SetCVarValue("SoftTargetNameplateInteract", open and 1 or 0)
-	-- SoftTargetIconGameObject doit être 1 pour que le jeu crée des nameplates pour les game objects
-	if open then SetCVarValue("SoftTargetIconGameObject", 1) end
+	-- SoftTargetIconGameObject et SoftTargetIconInteract doivent être 1 quand la gate s'ouvre :
+	-- sans icône, le jeu ne crée pas toujours la nameplate de la cible en soft target
 	for _, name in ipairs(ICON_CVARS) do
-		if name ~= "SoftTargetIconGameObject" then
-			local original = db.savedCVars and db.savedCVars[name]
-			if original ~= false then SetCVarValue(name, open and original or 0) end
-		end
+		SetCVarValue(name, open and 1 or 0)
 	end
 end
 
@@ -579,6 +579,7 @@ end
 local CURSOR_KEYWORDS = {
 	{ "gather",    "herb" },
 	{ "mine",      "ore" },
+	{ "skin",      "skin" },
 	{ "quest",     "quest" },
 	{ "important", "quest" },  -- les quêtes que le jeu distingue ont leur curseur, sans le mot « quest »
 	{ "recurring", "quest" },
@@ -690,7 +691,7 @@ local function Classify(unit, name)
 	local id = ObjectID(unit)
 	if id and BOBBER_IDS[id] then
 		category = "bobber"
-	elseif category ~= "ore" and category ~= "herb" and category ~= "bobber" then
+	elseif category ~= "ore" and category ~= "herb" and category ~= "skin" and category ~= "bobber" then
 		if IsQuestUnit(unit) then
 			category = "quest"
 		elseif service then
@@ -718,7 +719,11 @@ local Trained
 do
 	-- pour chaque catégorie, la ligne de compétence du métier dans les données du jeu, et les sorts de
 	-- pistage qu'il apprend (Découverte d'herbes, Découverte de gisements), ceux que NodeScan.lua reconnaît
-	local PROFESSIONS = { herb = { line = 182, finders = { 2383, 8387 } }, ore = { line = 186, finders = { 2580, 8388 } } }
+	local PROFESSIONS = {
+		herb = { line = 182, finders = { 2383, 8387 } },
+		ore  = { line = 186, finders = { 2580, 8388 } },
+		skin = { line = 393, finders = { 8613, 8617, 8618, 10768, 32678, 50305 } },
+	}
 
 	function Trained(category)
 		local profession = PROFESSIONS[category]
@@ -1515,8 +1520,10 @@ local function Decide()
 	end
 	local name = SafeCall(UnitName, unit)
 	local label = name or "?"
-	-- seuls les objets du décor sont mis en lumière : ni PNJ, ni cadavres
-	if SafeCall(UnitIsGameObject, unit) ~= true then
+	local isObject = SafeCall(UnitIsGameObject, unit) == true
+	local category, blocked, cursor, id = Classify(unit, name)
+	-- seuls les objets du décor et les cadavres à dépecer sont mis en lumière
+	if not isObject and (category ~= "skin" or SafeCall(UnitIsDead, unit) ~= true) then
 		Report(L.DEBUG_IGNORED:format(label))
 		glow.Elsewhere()
 		return Shut(unit, plate)
@@ -1528,7 +1535,6 @@ local function Decide()
 		return Shut(unit, plate)
 	end
 
-	local category, blocked, cursor, id = Classify(unit, name)
 	-- un filon ou une plante que le jeu désigne : Nodes.lua en retient le nom, pour le reconnaître sur la minimap
 	if name and ns.LearnNode and (category == "ore" or category == "herb") then ns.LearnNode(name, id, category) end
 	if id and (category == "ore" or category == "herb") then gathered[id] = true end
@@ -2028,10 +2034,15 @@ local function ShowZone(shown)
 	Notify()
 end
 
--- Nom de l'objet du décor visé en ce moment, mis en lumière ou non
+-- Nom de l'objet du décor ou du cadavre à dépecer visé en ce moment, mis en lumière ou non
 local function TargetName()
 	local unit = ResolveTarget()
-	if unit and SafeCall(UnitIsGameObject, unit) == true then return SafeCall(UnitName, unit) end
+	if not unit then return nil end
+	if SafeCall(UnitIsGameObject, unit) == true then return SafeCall(UnitName, unit) end
+	if SafeCall(UnitIsDead, unit) == true then
+		local _, category = ReadCursor(unit)
+		if category == "skin" then return SafeCall(UnitName, unit) end
+	end
 end
 
 -- Écarte un objet par son nom, ou cesse de l'écarter. Renvoie true s'il est désormais écarté,
@@ -2622,7 +2633,7 @@ function COMMANDS.status()
 		print("  " .. L.STATUS_NODES:format(failure and L.STATUS_UNAVAILABLE:format(failure)
 			or L.STATUS_NODES_SHOWN:format(Flag(db.nodeHerbs), Flag(db.nodeOre), Flag(cdb.nodeSwitch))))
 	end
-	print("  " .. L.STATUS_TRAINED:format(Flag(db.hideUntrained), Flag(Trained("herb")), Flag(Trained("ore"))))
+	print("  " .. L.STATUS_TRAINED:format(Flag(db.hideUntrained), Flag(Trained("herb")), Flag(Trained("ore")), Flag(Trained("skin"))))
 	print("  " .. L.STATUS_HIDE:format(Flag(db.hideInCombat), Flag(db.hideInInstance), Flag(db.hideLocked), Flag(Paused())))
 	local shown = {}
 	for _, category in ipairs(CATEGORY_ORDER) do

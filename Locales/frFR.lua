@@ -19,7 +19,7 @@ L.COMMANDS = {
 	["aperçu"] = "preview", effet = "effect", couleur = "color", ["défaut"] = "default", taille = "size",
 	["intensité"] = "intensity", ["décalage"] = "offset", fondu = "fade", nom = "name", ["icône"] = "icon", texte = "text", police = "font", montrer = "show",
 	["portée"] = "range", exclusif = "exclusive", indisponible = "unavailable", ["métier"] = "profession", minerai = "ore", herbe = "herb",
-	["quête"] = "quest", coffre = "chest", flotteur = "bobber", autre = "other", ignorer = "ignore", liste = "list", vider = "clear",
+	["dépeçage"] = "skin", depecage = "skin", ["quête"] = "quest", coffre = "chest", flotteur = "bobber", autre = "other", ignorer = "ignore", liste = "list", vider = "clear",
 	objectifs = "objectives", ["état"] = "status", aide = "help", touche = "key", aucune = "none", langue = "language",
 	ressources = "nodes", alterner = "switch", balayage = "scan", bordure = "ring",
 	seule = "glowonly",
@@ -33,6 +33,8 @@ L.CATEGORY_ORE = "Minerais"
 L.CATEGORY_ORE_TIP = "Filons de minerai."
 L.CATEGORY_HERB = "Herbes"
 L.CATEGORY_HERB_TIP = "Plantes à cueillir."
+L.CATEGORY_SKIN = "Dépeçage"
+L.CATEGORY_SKIN_TIP = "Bêtes et créatures à dépecer."
 L.CATEGORY_QUEST = "Quêtes"
 L.CATEGORY_QUEST_TIP = "Objets liés à l'une de tes quêtes en cours."
 L.CATEGORY_CHEST = "Coffres"
@@ -44,6 +46,7 @@ L.CATEGORY_OTHER_TIP = "Objets du quotidien : portes, boîtes aux lettres, levie
 
 L.NAME_ORE = "minerai"
 L.NAME_HERB = "herbe"
+L.NAME_SKIN = "dépeçage"
 L.NAME_QUEST = "quête"
 L.NAME_CHEST = "coffre"
 L.NAME_BOBBER = "flotteur"
@@ -52,6 +55,7 @@ L.NAME_NONE = "aucune"
 
 L.SAMPLE_ORE = "Filon de cuivre"
 L.SAMPLE_HERB = "Pacifique"
+L.SAMPLE_SKIN = "Loup des bois"
 L.SAMPLE_QUEST = "Caisse de ravitaillement"
 L.SAMPLE_CHEST = "Coffre cabossé"
 L.SAMPLE_BOBBER = "Flotteur"
@@ -154,8 +158,8 @@ L.HIDE_INSTANCE = "En instance"
 L.HIDE_INSTANCE_TIP = "Pas d'effet en donjon, en raid ni en champ de bataille."
 L.HIDE_LOCKED = "Sur un objet indisponible"
 L.HIDE_LOCKED_TIP = "L'effet s'éteint sur un objet que le jeu refuse pour l'instant : compétence trop faible, objet verrouillé… Le jeu ne le dit qu'une fois l'objet à portée."
-L.HIDE_UNTRAINED = "Plantes et filons sans le métier"
-L.HIDE_UNTRAINED_TIP = "Pas d'effet sur les plantes si ce personnage n'a pas l'Herboristerie, ni sur les filons sans le Minage."
+L.HIDE_UNTRAINED = "Plantes, filons et dépeçage sans le métier"
+L.HIDE_UNTRAINED_TIP = "Pas d'effet sur les plantes si ce personnage n'a pas l'Herboristerie, sur les filons sans le Minage, ni sur les cadavres sans le Dépeçage."
 
 L.RANGE = "Portée"
 L.RANGE_TIP = "Distance jusqu'à laquelle le jeu peut désigner un objet à mettre en lumière."
@@ -254,7 +258,7 @@ L.MSG_SHARED = "%s : de nouveau l'effet et l'apparence de tous les objets."
 L.MSG_HIDE_COMBAT = "effet masqué en combat : %s"
 L.MSG_HIDE_INSTANCE = "effet masqué en instance : %s"
 L.MSG_HIDE_LOCKED = "effet masqué sur les objets indisponibles : %s"
-L.MSG_HIDE_UNTRAINED = "effet masqué sur les plantes et filons sans le métier : %s"
+L.MSG_HIDE_UNTRAINED = "effet masqué sur les plantes, filons et dépeçage sans le métier : %s"
 L.MSG_GLOW_ONLY = "lueur seule, la nameplate laissée au jeu ou à un autre addon : %s"
 L.MSG_IGNORED = "%s ne recevra plus d'effet."
 L.MSG_UNIGNORED = "%s n'est plus ignoré."
@@ -292,7 +296,7 @@ L.STATUS_LINE = "ligne de pêche à l'eau : %s | canalisation en cours : %s"
 L.STATUS_NODES = "icônes de la minimap : %s"
 L.STATUS_NODES_SHOWN = "plantes %s, filons %s, pistages alternés %s"
 L.STATUS_HIDE = "masqué en combat : %s | en instance : %s | sur les objets indisponibles : %s | en pause en ce moment : %s"
-L.STATUS_TRAINED = "pas d'effet sur les plantes et filons sans le métier : %s | herboristerie : %s, minage : %s"
+L.STATUS_TRAINED = "pas d'effet sans le métier : %s | herboristerie : %s, minage : %s, dépeçage : %s"
 L.STATUS_OBJECTS = "catégories affichées sur ce personnage : %s | objets ignorés : %d"
 L.STATUS_OWN = "catégories aux réglages propres : %s"
 L.STATUS_EFFECT = "effet : %s | textures : %s"
@@ -387,7 +391,7 @@ L.HELP = {
 	"/lueur minimap — affiche ou masque le bouton de la minimap",
 	"/lueur on | off — active ou désactive Lueur (off restaure tes réglages)",
 	"/lueur aperçu — ouvre la fenêtre des réglages sur l'aperçu, qui montre l'effet sur un objet en 3D",
-	"/lueur effet [catégorie] <nom> — donne cet effet à toutes les catégories, ou à une seule (minerai, herbe, quête, coffre, flotteur, autre) ; sans nom, en donne la liste",
+	"/lueur effet [catégorie] <nom> — donne cet effet à toutes les catégories, ou à une seule (minerai, herbe, dépeçage, quête, coffre, flotteur, autre) ; sans nom, en donne la liste",
 	"/lueur couleur <catégorie> <rrvvbb> | défaut — couleur de l'effet d'une catégorie ; sans couleur, l'affiche",
 	"/lueur commun <catégorie> — rend à une catégorie l'effet et l'apparence de tous les objets",
 	"/lueur taille [catégorie] <{size}> — taille de l'effet (défaut {size=})",
@@ -402,9 +406,9 @@ L.HELP = {
 	"/lueur arc <{arc}> — 0 pile devant, 1 devant, 2 toutes directions (défaut {arc=})",
 	"/lueur exclusif — le jeu ne signale que les cibles qui reçoivent un effet, ou toutes",
 	"/lueur seule — Lueur ne dessine que la lumière et laisse la nameplate de la cible (nom, icône) au jeu ou à un autre addon, ou non",
-	"/lueur combat | instance | indisponible | métier — masque ou non l'effet en combat, en instance, sur les objets indisponibles, sur les plantes et filons sans le métier",
+	"/lueur combat | instance | indisponible | métier — masque ou non l'effet en combat, en instance, sur les objets indisponibles, sur les plantes, filons et dépeçage sans le métier",
 	"/lueur touche <TOUCHE> | aucune — assigne la touche qui ramasse l'objet mis en lumière (F, SHIFT-E, BUTTON4…) ; sans touche, l'affiche",
-	"/lueur minerai | herbe | quête | coffre | flotteur | autre — affiche ou masque une catégorie, pour ce personnage",
+	"/lueur minerai | herbe | dépeçage | quête | coffre | flotteur | autre — affiche ou masque une catégorie, pour ce personnage",
 	"/lueur ressources [minerai | herbe] — affiche ou masque sur la minimap les icônes des plantes et des filons ; ressources taille <{nodeSize}> règle leur taille (défaut {nodeSize=}) ; ressources bordure <{nodeRing}> règle l'épaisseur de leur anneau coloré, 0 pour aucun (défaut {nodeRing=}) ; ressources combat : si la minimap se lit en combat",
 	"/lueur alterner [<{nodeSwitchYards}>] — avec les deux métiers de récolte : alterne le pistage des plantes et celui des minerais au fil de tes déplacements ; un nombre règle la distance entre deux bascules, en mètres (défaut {nodeSwitchYards=})",
 	"/lueur balayage — affiche ce que le dernier balayage de la minimap a lu, et ce que Lueur en a fait ; balayage <{nodeScanYards}> règle l'espacement des balayages, en mètres (défaut {nodeScanYards=})",

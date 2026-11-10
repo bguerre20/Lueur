@@ -53,6 +53,9 @@ local MODELS = {
 	bobber = 201000, -- world/goober/g_fishingbobber.m2
 	other = 199999,  -- world/generic/passivedoodads/postboxes/postboxhuman.m2
 }
+local CREATURE_DISPLAYS = {
+	skin  = 802,     -- loup (Timber Wolf)
+}
 
 local view, plate             -- la vue où se dessine l'objet, créée avec la page ; le cadre qui y tient lieu de nameplate
 local scene, actor            -- la scène 3D et son modèle ; nil sur un client qui n'en a pas
@@ -207,8 +210,14 @@ local function ShowCategory(shown)
 	if actor then
 		actor:Hide() -- le temps qu'il se charge et soit cadré
 		if actor.SetScale then pcall(actor.SetScale, actor, 1) end
-		local ok, success = pcall(actor.SetModelByFileID, actor, MODELS[category])
-		loaded = ok and success == true
+		local display = CREATURE_DISPLAYS[category]
+		if display and actor.SetModelByCreatureDisplayID then
+			local ok, success = pcall(actor.SetModelByCreatureDisplayID, actor, display)
+			loaded = ok and success ~= false
+		elseif MODELS[category] then
+			local ok, success = pcall(actor.SetModelByFileID, actor, MODELS[category])
+			loaded = ok and success == true
+		end
 		scene:SetShown(loaded)
 	end
 	fitted = not loaded

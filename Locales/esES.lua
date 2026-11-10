@@ -19,7 +19,7 @@ L.COMMANDS = {
 	vista = "preview", efecto = "effect", original = "default", ["tamaño"] = "size",
 	intensidad = "intensity", desplazamiento = "offset", desvanecer = "fade", nombre = "name", icono = "icon", texto = "text", fuente = "font", mostrar = "show",
 	alcance = "range", exclusivo = "exclusive", combate = "combat", estancia = "instance", bloqueado = "unavailable", ["profesión"] = "profession",
-	mineral = "ore", hierba = "herb", ["misión"] = "quest", cofre = "chest", corcho = "bobber", otro = "other", ignorar = "ignore",
+	mineral = "ore", hierba = "herb", desuello = "skin", ["misión"] = "quest", cofre = "chest", corcho = "bobber", otro = "other", ignorar = "ignore",
 	lista = "list", vaciar = "clear", objetivos = "objectives", estado = "status", ayuda = "help", tecla = "key",
 	ninguna = "none", idioma = "language",
 	recursos = "nodes", alternar = "switch", barrido = "scan", borde = "ring",
@@ -34,6 +34,8 @@ L.CATEGORY_ORE = "Minerales"
 L.CATEGORY_ORE_TIP = "Filones y vetas de mineral."
 L.CATEGORY_HERB = "Hierbas"
 L.CATEGORY_HERB_TIP = "Plantas que puedes recolectar."
+L.CATEGORY_SKIN = "Desuello"
+L.CATEGORY_SKIN_TIP = "Bestias y criaturas que puedes desollar."
 L.CATEGORY_QUEST = "Misiones"
 L.CATEGORY_QUEST_TIP = "Objetos ligados a una de tus misiones en curso."
 L.CATEGORY_CHEST = "Cofres"
@@ -45,6 +47,7 @@ L.CATEGORY_OTHER_TIP = "Objetos cotidianos: puertas, buzones, palancas…"
 
 L.NAME_ORE = "mineral"
 L.NAME_HERB = "hierba"
+L.NAME_SKIN = "desuello"
 L.NAME_QUEST = "misión"
 L.NAME_CHEST = "cofre"
 L.NAME_BOBBER = "corcho"
@@ -53,6 +56,7 @@ L.NAME_NONE = "ninguna"
 
 L.SAMPLE_ORE = "Filón de cobre"
 L.SAMPLE_HERB = "Flor de paz"
+L.SAMPLE_SKIN = "Lobo del bosque"
 L.SAMPLE_QUEST = "Caja de suministros"
 L.SAMPLE_CHEST = "Cofre maltrecho"
 L.SAMPLE_BOBBER = "Corcho de pesca"
@@ -155,8 +159,8 @@ L.HIDE_INSTANCE = "En estancias"
 L.HIDE_INSTANCE_TIP = "Sin efecto en mazmorras, bandas y campos de batalla."
 L.HIDE_LOCKED = "En objetos que no puedo usar"
 L.HIDE_LOCKED_TIP = "El efecto se apaga en un objeto que el juego te niega por ahora: habilidad insuficiente, objeto cerrado… El juego solo lo indica cuando el objeto está al alcance."
-L.HIDE_UNTRAINED = "Hierbas y minerales sin la profesión"
-L.HIDE_UNTRAINED_TIP = "Sin efecto en las hierbas si este personaje no tiene Herboristería, ni en los minerales sin Minería."
+L.HIDE_UNTRAINED = "Hierbas, minerales y desuello sin la profesión"
+L.HIDE_UNTRAINED_TIP = "Sin efecto en las hierbas sin Herboristería, en los minerales sin Minería o en el desuello sin Desuello."
 
 L.RANGE = "Alcance"
 L.RANGE_TIP = "Hasta qué distancia puede el juego elegir un objeto para resaltarlo."
@@ -255,7 +259,7 @@ L.MSG_SHARED = "%s: de nuevo el efecto y la apariencia de todos los objetos."
 L.MSG_HIDE_COMBAT = "efecto oculto en combate: %s"
 L.MSG_HIDE_INSTANCE = "efecto oculto en estancias: %s"
 L.MSG_HIDE_LOCKED = "efecto oculto en los objetos que no puedes usar: %s"
-L.MSG_HIDE_UNTRAINED = "efecto oculto en hierbas y minerales sin la profesión: %s"
+L.MSG_HIDE_UNTRAINED = "efecto oculto en hierbas, minerales y desuello sin la profesión: %s"
 L.MSG_GLOW_ONLY = "solo el brillo, la placa de nombre queda para el juego u otro addon: %s"
 L.MSG_IGNORED = "%s ya no recibirá efecto."
 L.MSG_UNIGNORED = "%s deja de estar ignorado."
@@ -293,7 +297,7 @@ L.STATUS_LINE = "sedal en el agua: %s | canalización en curso: %s"
 L.STATUS_NODES = "iconos del minimapa: %s"
 L.STATUS_NODES_SHOWN = "hierbas %s, filones %s, rastreos alternados %s"
 L.STATUS_HIDE = "oculto en combate: %s | en estancias: %s | en objetos no disponibles: %s | en pausa ahora mismo: %s"
-L.STATUS_TRAINED = "sin efecto en hierbas y minerales sin la profesión: %s | herboristería: %s, minería: %s"
+L.STATUS_TRAINED = "sin efecto sin la profesión: %s | herboristería: %s, minería: %s, desuello: %s"
 L.STATUS_OBJECTS = "categorías mostradas en este personaje: %s | objetos ignorados: %d"
 L.STATUS_OWN = "categorías con ajustes propios: %s"
 L.STATUS_EFFECT = "efecto: %s | texturas: %s"
@@ -388,7 +392,7 @@ L.HELP = {
 	"/lueur minimap — muestra u oculta el botón del minimapa",
 	"/lueur on | off — activa o desactiva Lueur (off restaura tus ajustes)",
 	"/lueur vista — abre la ventana de ajustes en la vista previa, que muestra el efecto sobre un objeto en 3D",
-	"/lueur efecto [categoría] <nombre> — da este efecto a todas las categorías, o a una sola (mineral, hierba, misión, cofre, corcho, otro); sin nombre, los enumera",
+	"/lueur efecto [categoría] <nombre> — da este efecto a todas las categorías, o a una sola (mineral, hierba, desuello, misión, cofre, corcho, otro); sin nombre, los enumera",
 	"/lueur color <categoría> <rrggbb> | original — color del efecto de una categoría; sin color, lo muestra",
 	"/lueur común <categoría> — devuelve a una categoría el efecto y la apariencia de todos los objetos",
 	"/lueur tamaño [categoría] <{size}> — tamaño del efecto (por defecto {size=})",
@@ -403,9 +407,9 @@ L.HELP = {
 	"/lueur arc <{arc}> — 0 justo delante, 1 delante, 2 todas las direcciones (por defecto {arc=})",
 	"/lueur exclusivo — si el juego solo señala los objetivos que reciben efecto",
 	"/lueur sololuz — si Lueur solo dibuja la luz y deja la placa de nombre del objetivo (nombre, icono) al juego o a otro addon",
-	"/lueur combate | estancia | bloqueado | profesión — si el efecto se oculta en combate, en estancias, en objetos que no puedes usar, en hierbas y minerales sin la profesión",
+	"/lueur combate | estancia | bloqueado | profesión — si el efecto se oculta en combate, en estancias, en objetos que no puedes usar, en hierbas, minerales y desuello sin la profesión",
 	"/lueur tecla <TECLA> | ninguna — asigna la tecla que recoge el objeto resaltado (F, SHIFT-E, BUTTON4…); sin tecla, la muestra",
-	"/lueur mineral | hierba | misión | cofre | corcho | otro — muestra u oculta una categoría, para este personaje",
+	"/lueur mineral | hierba | desuello | misión | cofre | corcho | otro — muestra u oculta una categoría, para este personaje",
 	"/lueur recursos [mineral | hierba] — muestra u oculta en el minimapa los iconos de las hierbas y los filones; recursos tamaño <{nodeSize}> ajusta su tamaño (original {nodeSize=}); recursos borde <{nodeRing}> ajusta el grosor de su anillo de color, 0 para ninguno (original {nodeRing=}); recursos combate: si el minimapa se lee en combate",
 	"/lueur alternar [<{nodeSwitchYards}>] — con las dos profesiones de recolección: alterna el rastreo de hierbas y el de minerales mientras te desplazas; un número ajusta la distancia entre dos cambios, en metros (original {nodeSwitchYards=})",
 	"/lueur barrido — muestra lo que leyó el último barrido del minimapa, y lo que Lueur hizo con ello; barrido <{nodeScanYards}> ajusta la separación entre escaneos, en metros (original {nodeScanYards=})",
