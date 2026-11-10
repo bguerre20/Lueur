@@ -43,8 +43,8 @@ local BUTTON_RADIUS = 5       -- écart entre le bord de la minimap et le centre
 
 -- Icône de chaque catégorie dans la liste des objets : des icônes de métier et d'objet du jeu
 local CATEGORY_ICONS = {
-	ore = "Trade_Mining", herb = "Trade_Herbalism", quest = "INV_Misc_Note_01", chest = "INV_Box_01",
-	bobber = "Trade_Fishing", other = "INV_Misc_Gear_01",
+	ore = "Trade_Mining", herb = "Trade_Herbalism", skin = "INV_Misc_Pelt_Wolf_01", quest = "INV_Misc_Note_01",
+	chest = "INV_Box_01", bobber = "Trade_Fishing", other = "INV_Misc_Gear_01",
 }
 local SETTINGS_ICON = "Trade_Engineering"
 local NODES_ICON = "INV_Misc_Map_01"
@@ -672,7 +672,7 @@ local function AddEntry(parent, x, width, name, icon, key)
 	row.scope = scope
 	row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
 	-- l'icône, la case et la pastille tiennent ensemble au milieu de la case
-	local content = SLOT + (key and 52 or 0)
+	local content = SLOT + (key and 46 or 0)
 	local image, slot = Skin.Slot(row, SLOT, "TOPLEFT", (width - 2 - content) / 2 + 3, -6)
 	Skin.SetIcon(image, icon)
 	-- la case choisie : une lueur dorée derrière son icône (vu en jeu le 2026-11-09, un aplat sur toute
@@ -710,7 +710,7 @@ local function AddEntry(parent, x, width, name, icon, key)
 
 	if key then
 		local toggle = CreateFrame("CheckButton", nil, row, "MinimalCheckboxTemplate")
-		toggle:SetPoint("LEFT", slot, "RIGHT", 5, 0)
+		toggle:SetPoint("LEFT", slot, "RIGHT", 2, 0)
 		toggle:SetScript("OnClick", function(self)
 			local checked = self:GetChecked()
 			PlaySound(checked and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
@@ -718,7 +718,7 @@ local function AddEntry(parent, x, width, name, icon, key)
 		end)
 		SetTooltip(toggle, name)
 		local swatch = AddSwatch(row, key)
-		swatch:SetPoint("LEFT", toggle, "RIGHT", 1, 0)
+		swatch:SetPoint("LEFT", toggle, "RIGHT", 0, 0)
 		row.toggle, row.swatch = toggle, swatch
 	end
 	refreshers[#refreshers + 1] = function()

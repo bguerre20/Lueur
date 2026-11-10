@@ -18,7 +18,9 @@ L.CONFIRM = "Confirm?"       -- sur un bouton qui attend un second geste
 
 -- Mots de commande propres à cette langue -> nom anglais de la commande. Les noms anglais
 -- répondent partout ; les accents sont facultatifs.
-L.COMMANDS = {}
+L.COMMANDS = {
+	skinning = "skin",
+}
 
 ---------------------------------------------------------------------------
 -- Catégories, états, effets
@@ -28,6 +30,8 @@ L.CATEGORY_ORE = "Ore"
 L.CATEGORY_ORE_TIP = "Mineral veins and deposits."
 L.CATEGORY_HERB = "Herbs"
 L.CATEGORY_HERB_TIP = "Plants you can gather."
+L.CATEGORY_SKIN = "Skinning"
+L.CATEGORY_SKIN_TIP = "Beasts and creatures you can skin."
 L.CATEGORY_QUEST = "Quests"
 L.CATEGORY_QUEST_TIP = "Objects tied to one of your current quests."
 L.CATEGORY_CHEST = "Chests"
@@ -40,6 +44,7 @@ L.CATEGORY_OTHER_TIP = "Everyday objects: doors, mailboxes, levers…"
 -- la catégorie d'un objet, dans une phrase du diagnostic
 L.NAME_ORE = "ore"
 L.NAME_HERB = "herb"
+L.NAME_SKIN = "skinning"
 L.NAME_QUEST = "quest"
 L.NAME_CHEST = "chest"
 L.NAME_BOBBER = "bobber"
@@ -49,6 +54,7 @@ L.NAME_NONE = "none"
 -- l'objet que l'aperçu montre pour chaque catégorie
 L.SAMPLE_ORE = "Copper Vein"
 L.SAMPLE_HERB = "Peacebloom"
+L.SAMPLE_SKIN = "Timber Wolf"
 L.SAMPLE_QUEST = "Supply Crate"
 L.SAMPLE_CHEST = "Battered Chest"
 L.SAMPLE_BOBBER = "Fishing Bobber"
@@ -151,8 +157,8 @@ L.HIDE_INSTANCE = "In instances"
 L.HIDE_INSTANCE_TIP = "No effect in dungeons, raids and battlegrounds."
 L.HIDE_LOCKED = "On objects I cannot use"
 L.HIDE_LOCKED_TIP = "The effect goes out on an object the game refuses for now: skill too low, object locked… The game only says so once you are within reach."
-L.HIDE_UNTRAINED = "Herbs and ore without the profession"
-L.HIDE_UNTRAINED_TIP = "No effect on herbs if this character does not have Herbalism, nor on ore without Mining."
+L.HIDE_UNTRAINED = "Herbs, ore and skinning without the profession"
+L.HIDE_UNTRAINED_TIP = "No effect on herbs if this character does not have Herbalism, on ore without Mining, nor on corpses without Skinning."
 
 L.RANGE = "Range"
 L.RANGE_TIP = "How far away the game may pick an object to highlight."
@@ -252,7 +258,7 @@ L.MSG_SHARED = "%s: back to the effect and appearance of all objects."
 L.MSG_HIDE_COMBAT = "effect hidden in combat: %s"
 L.MSG_HIDE_INSTANCE = "effect hidden in instances: %s"
 L.MSG_HIDE_LOCKED = "effect hidden on objects you cannot use: %s"
-L.MSG_HIDE_UNTRAINED = "effect hidden on herbs and ore without the profession: %s"
+L.MSG_HIDE_UNTRAINED = "effect hidden on herbs, ore and skinning without the profession: %s"
 L.MSG_GLOW_ONLY = "glow only, the nameplate left to the game or another addon: %s"
 L.MSG_IGNORED = "%s will no longer get an effect."
 L.MSG_UNIGNORED = "%s is no longer ignored."
@@ -290,7 +296,7 @@ L.STATUS_LINE = "fishing line out: %s | channel in progress: %s"
 L.STATUS_NODES = "minimap icons: %s"
 L.STATUS_NODES_SHOWN = "herbs %s, ore %s, trackings alternated %s"
 L.STATUS_HIDE = "hidden in combat: %s | in instances: %s | on unavailable objects: %s | paused right now: %s"
-L.STATUS_TRAINED = "no effect on herbs and ore without the profession: %s | herbalism: %s, mining: %s"
+L.STATUS_TRAINED = "no effect without the profession: %s | herbalism: %s, mining: %s, skinning: %s"
 L.STATUS_OBJECTS = "categories shown on this character: %s | ignored objects: %d"
 L.STATUS_OWN = "categories with settings of their own: %s"
 L.STATUS_EFFECT = "effect: %s | textures: %s"
@@ -386,7 +392,7 @@ L.HELP = {
 	"/lueur minimap — shows or hides the minimap button",
 	"/lueur on | off — enables or disables Lueur (off restores your settings)",
 	"/lueur preview — opens the settings window on the preview, which shows the effect on a 3D object",
-	"/lueur effect [category] <name> — gives this effect to every category, or to one of them (ore, herb, quest, chest, bobber, other); without a name, lists them",
+	"/lueur effect [category] <name> — gives this effect to every category, or to one of them (ore, herb, skin, quest, chest, bobber, other); without a name, lists them",
 	"/lueur color <category> <rrggbb> | default — color of a category's effect; without a color, shows it",
 	"/lueur shared <category> — gives a category back the effect and appearance of all objects",
 	"/lueur size [category] <{size}> — size of the effect (default {size=})",
@@ -401,9 +407,9 @@ L.HELP = {
 	"/lueur arc <{arc}> — 0 dead ahead, 1 in front, 2 every direction (default {arc=})",
 	"/lueur exclusive — whether the game only points out the targets that get an effect",
 	"/lueur glowonly — whether Lueur only draws the light, leaving the target's nameplate (name, icon) to the game or another addon",
-	"/lueur combat | instance | unavailable | profession — whether the effect hides in combat, in instances, on objects you cannot use, on herbs and ore without the profession",
+	"/lueur combat | instance | unavailable | profession — whether the effect hides in combat, in instances, on objects you cannot use, on herbs, ore and skinning without the profession",
 	"/lueur key <KEY> | none — binds the key that picks up the highlighted object (F, SHIFT-E, BUTTON4…); without a key, shows it",
-	"/lueur ore | herb | quest | chest | bobber | other — shows or hides a category, for this character",
+	"/lueur ore | herb | skin | quest | chest | bobber | other — shows or hides a category, for this character",
 	"/lueur nodes [ore | herb] — shows or hides the icons of herbs and veins on the minimap; nodes size <{nodeSize}> sets their size (default {nodeSize=}); nodes ring <{nodeRing}> sets the thickness of their coloured ring, 0 for none (default {nodeRing=}); nodes combat: whether the minimap is read in combat",
 	"/lueur switch [<{nodeSwitchYards}>] — with both gathering professions: alternates Find Herbs and Find Minerals as you move; a number sets how far apart, in yards (default {nodeSwitchYards=})",
 	"/lueur scan — shows what the last scan of the minimap read, and what Lueur made of it; scan <{nodeScanYards}> sets how far apart scans are, in yards (default {nodeScanYards=})",

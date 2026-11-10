@@ -19,7 +19,7 @@ L.COMMANDS = {
 	vorschau = "preview", effekt = "effect", farbe = "color", standard = "default", ["größe"] = "size",
 	["intensität"] = "intensity", versatz = "offset", verblassen = "fade", symbol = "icon", schrift = "font", zeigen = "show",
 	reichweite = "range", exklusiv = "exclusive", kampf = "combat", instanz = "instance", gesperrt = "unavailable", beruf = "profession",
-	erz = "ore", kraut = "herb", truhe = "chest", schwimmer = "bobber", sonstiges = "other", ignorieren = "ignore", liste = "list",
+	erz = "ore", kraut = "herb", ["kürschnern"] = "skin", kuerschnern = "skin", truhe = "chest", schwimmer = "bobber", sonstiges = "other", ignorieren = "ignore", liste = "list",
 	leeren = "clear", ziele = "objectives", hilfe = "help", taste = "key", keine = "none", sprache = "language",
 	sammelpunkte = "nodes", wechseln = "switch", abtasten = "scan", rand = "ring",
 	nurlicht = "glowonly",
@@ -33,6 +33,8 @@ L.CATEGORY_ORE = "Erze"
 L.CATEGORY_ORE_TIP = "Erzadern und Erzvorkommen."
 L.CATEGORY_HERB = "Kräuter"
 L.CATEGORY_HERB_TIP = "Pflanzen, die du sammeln kannst."
+L.CATEGORY_SKIN = "Kürschnern"
+L.CATEGORY_SKIN_TIP = "Wildtiere und Kreaturen, die du häuten kannst."
 L.CATEGORY_QUEST = "Quests"
 L.CATEGORY_QUEST_TIP = "Objekte, die zu einer deiner laufenden Quests gehören."
 L.CATEGORY_CHEST = "Truhen"
@@ -44,6 +46,7 @@ L.CATEGORY_OTHER_TIP = "Alltägliche Objekte: Türen, Briefkästen, Hebel…"
 
 L.NAME_ORE = "Erz"
 L.NAME_HERB = "Kraut"
+L.NAME_SKIN = "Kürschnern"
 L.NAME_QUEST = "Quest"
 L.NAME_CHEST = "Truhe"
 L.NAME_BOBBER = "Schwimmer"
@@ -52,6 +55,7 @@ L.NAME_NONE = "keine"
 
 L.SAMPLE_ORE = "Kupferader"
 L.SAMPLE_HERB = "Friedensblume"
+L.SAMPLE_SKIN = "Waldwolf"
 L.SAMPLE_QUEST = "Vorratskiste"
 L.SAMPLE_CHEST = "Ramponierte Truhe"
 L.SAMPLE_BOBBER = "Schwimmer"
@@ -154,8 +158,8 @@ L.HIDE_INSTANCE = "In Instanzen"
 L.HIDE_INSTANCE_TIP = "Kein Effekt in Dungeons, Schlachtzügen und auf Schlachtfeldern."
 L.HIDE_LOCKED = "Auf nicht nutzbaren Objekten"
 L.HIDE_LOCKED_TIP = "Der Effekt erlischt auf einem Objekt, das das Spiel dir vorerst verweigert: Fertigkeit zu niedrig, Objekt verschlossen… Das Spiel verrät es erst, wenn du in Reichweite bist."
-L.HIDE_UNTRAINED = "Kräuter und Erz ohne den Beruf"
-L.HIDE_UNTRAINED_TIP = "Kein Effekt auf Kräutern, wenn dieser Charakter keine Kräuterkunde hat, und keiner auf Erz ohne Bergbau."
+L.HIDE_UNTRAINED = "Kräuter, Erz und Kürschnern ohne den Beruf"
+L.HIDE_UNTRAINED_TIP = "Kein Effekt auf Kräutern ohne Kräuterkunde, auf Erz ohne Bergbau oder beim Kürschnern ohne den Beruf."
 
 L.RANGE = "Reichweite"
 L.RANGE_TIP = "Bis zu welcher Entfernung das Spiel ein Objekt zum Hervorheben auswählen darf."
@@ -254,7 +258,7 @@ L.MSG_SHARED = "%s: wieder Effekt und Aussehen aller Objekte."
 L.MSG_HIDE_COMBAT = "Effekt im Kampf ausgeblendet: %s"
 L.MSG_HIDE_INSTANCE = "Effekt in Instanzen ausgeblendet: %s"
 L.MSG_HIDE_LOCKED = "Effekt auf nicht nutzbaren Objekten ausgeblendet: %s"
-L.MSG_HIDE_UNTRAINED = "Effekt auf Kräutern und Erz ohne den Beruf ausgeblendet: %s"
+L.MSG_HIDE_UNTRAINED = "Effekt auf Kräutern, Erz und Kürschnern ohne den Beruf ausgeblendet: %s"
 L.MSG_GLOW_ONLY = "nur das Leuchten, die Namensplakette bleibt dem Spiel oder einem anderen Addon: %s"
 L.MSG_IGNORED = "%s erhält keinen Effekt mehr."
 L.MSG_UNIGNORED = "%s wird nicht mehr ignoriert."
@@ -292,7 +296,7 @@ L.STATUS_LINE = "Angelschnur im Wasser: %s | laufende Kanalisierung: %s"
 L.STATUS_NODES = "Symbole auf der Minikarte: %s"
 L.STATUS_NODES_SHOWN = "Kräuter %s, Erze %s, Suchen abgewechselt %s"
 L.STATUS_HIDE = "im Kampf ausgeblendet: %s | in Instanzen: %s | auf nicht nutzbaren Objekten: %s | im Moment pausiert: %s"
-L.STATUS_TRAINED = "kein Effekt auf Kräutern und Erz ohne den Beruf: %s | Kräuterkunde: %s, Bergbau: %s"
+L.STATUS_TRAINED = "kein Effekt ohne den Beruf: %s | Kräuterkunde: %s, Bergbau: %s, Kürschnern: %s"
 L.STATUS_OBJECTS = "auf diesem Charakter angezeigte Kategorien: %s | ignorierte Objekte: %d"
 L.STATUS_OWN = "Kategorien mit eigenen Einstellungen: %s"
 L.STATUS_EFFECT = "Effekt: %s | Texturen: %s"
@@ -387,7 +391,7 @@ L.HELP = {
 	"/lueur minimap — zeigt oder verbirgt den Minikartenknopf",
 	"/lueur on | off — aktiviert oder deaktiviert Lueur (off stellt deine Einstellungen wieder her)",
 	"/lueur vorschau — öffnet das Einstellungsfenster mit der Vorschau, die den Effekt auf einem 3D-Objekt zeigt",
-	"/lueur effekt [Kategorie] <Name> — gibt diesen Effekt allen Kategorien oder nur einer (erz, kraut, quest, truhe, schwimmer, sonstiges); ohne Namen werden die Effekte aufgelistet",
+	"/lueur effekt [Kategorie] <Name> — gibt diesen Effekt allen Kategorien oder nur einer (erz, kraut, kürschnern, quest, truhe, schwimmer, sonstiges); ohne Namen werden die Effekte aufgelistet",
 	"/lueur farbe <Kategorie> <rrggbb> | standard — Farbe des Effekts einer Kategorie; ohne Farbe wird sie angezeigt",
 	"/lueur gemeinsam <Kategorie> — gibt einer Kategorie wieder Effekt und Aussehen aller Objekte",
 	"/lueur größe [Kategorie] <{size}> — Größe des Effekts (Standard {size=})",
@@ -402,9 +406,9 @@ L.HELP = {
 	"/lueur arc <{arc}> — 0 genau voraus, 1 vor mir, 2 alle Richtungen (Standard {arc=})",
 	"/lueur exklusiv — ob das Spiel nur auf Ziele hinweist, die einen Effekt erhalten",
 	"/lueur nurlicht — ob Lueur nur das Licht zeichnet und die Namensplakette des Ziels (Name, Symbol) dem Spiel oder einem anderen Addon überlässt",
-	"/lueur kampf | instanz | gesperrt | beruf — ob der Effekt im Kampf, in Instanzen, auf nicht nutzbaren Objekten, auf Kräutern und Erz ohne den Beruf ausgeblendet wird",
+	"/lueur kampf | instanz | gesperrt | beruf — ob der Effekt im Kampf, in Instanzen, auf nicht nutzbaren Objekten, auf Kräutern, Erz und Kürschnern ohne den Beruf ausgeblendet wird",
 	"/lueur taste <TASTE> | keine — belegt die Taste, die das hervorgehobene Objekt aufhebt (F, SHIFT-E, BUTTON4…); ohne Taste wird sie angezeigt",
-	"/lueur erz | kraut | quest | truhe | schwimmer | sonstiges — zeigt oder verbirgt eine Kategorie, für diesen Charakter",
+	"/lueur erz | kraut | kürschnern | quest | truhe | schwimmer | sonstiges — zeigt oder verbirgt eine Kategorie, für diesen Charakter",
 	"/lueur sammelpunkte [erz | kraut] — zeigt oder verbirgt die Symbole der Kräuter und Erzvorkommen auf der Minikarte; sammelpunkte größe <{nodeSize}> stellt ihre Größe ein (Standard {nodeSize=}); sammelpunkte rand <{nodeRing}> stellt die Stärke ihres farbigen Rings ein, 0 für keinen (Standard {nodeRing=}); sammelpunkte kampf: ob die Minikarte im Kampf gelesen wird",
 	"/lueur wechseln [<{nodeSwitchYards}>] — mit beiden Sammelberufen: wechselt beim Laufen zwischen Kräutersuche und Mineraliensuche; eine Zahl stellt die Strecke zwischen zwei Wechseln ein, in Metern (Standard {nodeSwitchYards=})",
 	"/lueur abtasten — zeigt, was das letzte Abtasten der Minikarte gelesen hat und was Lueur daraus gemacht hat; abtasten <{nodeScanYards}> stellt den Abstand zwischen zwei Scans in Metern ein (Standard {nodeScanYards=})",
